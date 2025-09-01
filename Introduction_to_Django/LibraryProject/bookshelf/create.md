@@ -1,11 +1,11 @@
-# create.md
 ## Create Operation
-**Command:**
+### Command
 python
 from bookshelf.models import Book
-book = Book(title='1984', author='George Orwell', publication_year=1949)
-book.save()
+book = Book.objects.create(title='1984', author='George Orwell', publication_year=1949)
+print(book.title, book.author, book.publication_year)
 
 
-*Output:*
-*The book instance will be saved to the database with id.*
+*Output*
+
+1984 George Orwell 1949
