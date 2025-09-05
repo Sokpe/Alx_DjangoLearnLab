@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .csrf_exempt
+from . import views
+from .views import CustomLoginView, CustomLogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +28,13 @@ from .views import list_books, LibraryDetailView
 urlpatterns = [
     path('books/', list_books, name='list_books'),
     path('libraries/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
-
+    path('books/', views.list_books, name='list_books'),
+    path('libraries/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('register/', views.register, name='register'),
 ]
+
+
+
+
