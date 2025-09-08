@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Book
-from .forms import BookForm, ExampleForm
+from .forms import ExampleForm
 from django.contrib.auth.decorators import permission_required
 
 # Example view using ExampleForm
