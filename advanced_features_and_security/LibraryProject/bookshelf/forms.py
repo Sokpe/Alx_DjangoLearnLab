@@ -8,14 +8,23 @@ class BookForm(forms.ModelForm):
 
     def clean_title(self):
         title = self.cleaned_data['title']
-        # Example validation: Title must not be empty
         if not title.strip():
             raise forms.ValidationError("Title cannot be empty")
         return title
 
     def clean_author(self):
         author = self.cleaned_data['author']
-        # Example validation: Author must not be empty
         if not author.strip():
             raise forms.ValidationError("Author cannot be empty")
         return author
+
+class ExampleForm(forms.Form):
+    name = forms.CharField(max_length=100, label='Your Name')
+    email = forms.EmailField(label='Your Email')
+    message = forms.CharField(widget=forms.Textarea, label='Message')
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if not name.strip():
+            raise forms.ValidationError("Name is required")
+        return name
