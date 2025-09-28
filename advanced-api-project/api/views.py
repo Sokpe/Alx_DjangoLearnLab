@@ -1,15 +1,20 @@
-from django.shortcuts import render
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from .models import Book
 
-# Create your views here.
+class BookList(ListView):
+    model = Book
 
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import BookViewSet
+class BookDetail(DetailView):
+    model = Book
 
-router = DefaultRouter()
-router.register(r'books', BookViewSet, basename='book')
+class BookCreate(CreateView):
+    model = Book
+    fields = ['title', 'author']
 
-urlpatterns = [
-    path('', include(router.urls)),
-]
+class BookUpdate(UpdateView):
+    model = Book
+    fields = ['title', 'author']
 
+class BookDelete(DeleteView):
+    model = Book
+    success_url = '/books/'
