@@ -1,20 +1,11 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Book
 
-class BookList(ListView):
-    model = Book
+from django.urls import path
+from .views import BookList, BookDetail, BookCreate, BookUpdate, BookDelete
 
-class BookDetail(DetailView):
-    model = Book
-
-class BookCreate(CreateView):
-    model = Book
-    fields = ['title', 'author']
-
-class BookUpdate(UpdateView):
-    model = Book
-    fields = ['title', 'author']
-
-class BookDelete(DeleteView):
-    model = Book
-    success_url = '/books/'
+urlpatterns = [
+    path('books/', BookList.as_view(), name='book-list'),
+    path('books/<int:pk>/', BookDetail.as_view(), name='book-detail'),
+    path('books/create/', BookCreate.as_view(), name='book-create'),
+    path('books/<int:pk>/update/', BookUpdate.as_view(), name='book-update'),
+    path('books/<int:pk>/delete/', BookDelete.as_view(), name='book-delete'),
+]
