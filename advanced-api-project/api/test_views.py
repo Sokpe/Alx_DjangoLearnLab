@@ -1,4 +1,3 @@
-
 import json
 from django.urls import reverse
 from rest_framework import status
@@ -12,6 +11,8 @@ class BookAPITestCase(APITestCase):
         data = {'title': 'Test Book', 'author': 'Test Author'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['title'], 'Test Book')
+        self.assertEqual(response.data['author'], 'Test Author')
 
     def test_update_book(self):
         # Test updating a book
@@ -20,10 +21,14 @@ class BookAPITestCase(APITestCase):
         data = {'title': 'Updated Test Book', 'author': 'Test Author'}
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Updated Test Book')
+        self.assertEqual(response.data['author'], 'Test Author')
 
-    def test_delete_book(self):
-        # Test deleting a book
+    def test_get_book(self):
+        # Test getting a book
         book = Book.objects.create(title='Test Book', author='Test Author')
         url = reverse('book-detail', kwargs={'pk': book.pk})
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Test Book')
+        self.assertEqual(response.data['author'], 'Test Author')
