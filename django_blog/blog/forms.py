@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile
 from .models import Post
+from .models import Comment
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
@@ -37,3 +38,8 @@ class PostForm(forms.ModelForm):
         super(PostForm, self).__init__(*args, **kwargs)
         self.fields['title'].widget.attrs['placeholder'] = 'Enter post title'
         self.fields['content'].widget.attrs['placeholder'] = 'Enter post content'
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content',)
