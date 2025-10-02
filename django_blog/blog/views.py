@@ -1,5 +1,5 @@
 # Create your views here.
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import UserRegisterForm
 from django.contrib.auth.decorators import login_required
@@ -7,8 +7,10 @@ from .forms import ProfileUpdateForm, ProfilePictureUpdateForm
 from .models import Profile
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post
+from .models import Post, Comment
 from .forms import PostForm
+from .forms import CommentForm
+from django.views.generic import CreateView, UpdateView, DeleteView
 
 
 def register(request):
@@ -22,8 +24,6 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'blog/register.html', {'form': form})
-
-
 
 
 
@@ -90,3 +90,69 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+    
+
+
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    comments = post.comments.all()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('post_detail', pk=pk)
+    else:
+        form = CommentForm()
+    return render(request, 'post_detail.html', {'post': post, 'comments': comments, 'form': form})
+
+@login_required
+def edit_comment(request, pk, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    if request.user != comment.author:
+        return redirect('post_detail', pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=pk)
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'edit_comment.html', {'form': form})
+
+@login_required
+def delete_comment(request, pk, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    if request.user != comment.author:
+        return redirect('post_detail', pk=pk)
+    if request.method == 'POST':
+        comment.delete()
+        return redirect('post_detail', pk=pk)
+    return render(request, 'delete_comment.html', {'comment': comment})
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['post_pk'])
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
