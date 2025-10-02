@@ -13,6 +13,22 @@ from .forms import CommentForm
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 
+def search_posts(request):
+    query = request.GET.get('q')
+    posts = Post.objects.filter(
+        Q(title__icontains=query) | Q(tags__name__icontains=query) | Q(content__icontains=query)
+    ).distinct()
+    return render(request, 'search_results.html', {'posts': posts})
+
+
+def search_posts(request):
+    query = request.GET.get('q')
+    posts = Post.objects.filter(
+        Q(title__icontains=query) | Q(tags__name__icontains=query) | Q(content__icontains=query)
+    ).distinct()
+    return render(request, 'search_results.html', {'posts': posts})
+
+
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -165,3 +181,4 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         comment = self.get_object()
 
         return self.request.user == comment.author
+
