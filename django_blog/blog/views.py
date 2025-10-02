@@ -136,6 +136,14 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
 
+
+ class PostByTagListView(ListView):
+    model = Post
+    template_name = 'post_list.html'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        return Post.objects.filter(tags__slug=tag_slug)
     def form_valid(self, form):
         post = get_object_or_404(Post, pk=self.kwargs['post_pk'])
         form.instance.post = post
@@ -155,4 +163,5 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         comment = self.get_object()
+
         return self.request.user == comment.author
