@@ -7,7 +7,7 @@ from .models import CustomUser
 User = get_user_model()
 
 class FollowUserView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = ['rest_framework.permissions.IsAuthenticated']
     queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
@@ -19,7 +19,7 @@ class FollowUserView(generics.GenericAPIView):
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 class UnfollowUserView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = ['rest_framework.permissions.IsAuthenticated']
     queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
