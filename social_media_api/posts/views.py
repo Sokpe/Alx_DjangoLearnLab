@@ -4,7 +4,7 @@ from .models import Post
 from .serializers import PostSerializer
 
 class FeedView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = ["permissions.IsAuthenticated"]
     serializer_class = PostSerializer
 
     def get_queryset(self):
