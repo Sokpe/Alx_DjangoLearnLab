@@ -6,7 +6,7 @@ from .models import Post, Like
 from notifications.models import Notification
 
 class LikePostView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = ["permissions.IsAuthenticated"]
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
@@ -23,7 +23,7 @@ class LikePostView(generics.GenericAPIView):
             return Response({"error": "You have already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
 
 class UnlikePostView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = ["permissions.IsAuthenticated"]
 
     def post(self, request, pk):
         post = get_object_or_404(Post, pk=pk)
